@@ -1,0 +1,286 @@
+openapi: 3.0.1
+info:
+  title: Matsuri Cash Flow Server API
+  version: 0.0.1
+servers:
+  - url: '{protocol}://localhost:10010/v1'
+    variables:
+      protocol:
+        enum:
+          - http
+          - https
+        default: https
+paths:
+  /items:
+    get:
+      tags:
+        - item
+      summary: Get all items
+      description: Returns all the items independent for event
+      operationId: getAllItems
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemList'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    x-swagger-router-controller: item_ctrl
+  /item:
+    post:
+      tags:
+        - item
+      summary: Insert new item
+      description: Insert new item based on the request body
+      operationId: insertItem
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewItem'
+      responses:
+        '201':
+          description: Item inserted successfully
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ID'
+  /item/{itemId}:
+    get:
+      tags:
+        - item
+      summary: Returns specific item
+      operationId: getItem
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          description: id of item generated ramdonmly
+          schema:
+            $ref: '#/components/schemas/ID'
+      responses:
+        '200':
+          description: A item object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+        '400':
+          description: The specified item ID is invalid (not an item).
+        '404':
+          description: An item with specified ID was not found.
+    put:
+      tags:
+        - item
+      summary: Update specific item
+      operationId: updateItem
+      parameters:
+        - name: itemId
+          in: path
+          required: true
+          description: id of item generated ramdonmly
+          schema:
+            $ref: '#/components/schemas/ID'
+      responses:
+        '200':
+          description: Updated sucesssfully
+  /events:
+    get:
+      tags:
+        - event
+      summary: Get all events
+      description: Returns all the events
+      operationId: getAllEvents
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventList'
+        default:
+          description: Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /event:
+    post:
+      tags:
+        - event
+      summary: Insert new event
+      description: Insert new event based on the request body
+      operationId: insertEvent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewEvent'
+      responses:
+        '201':
+          description: Event inserted successfully
+          content: 
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ID'
+  /event/{eventId}:
+    get:
+      tags:
+        - event
+      summary: Returns specific event
+      operationId: getEvent
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id of event generated ramdonmly
+          schema:
+            $ref: '#/components/schemas/ID'
+      responses:
+        '200':
+          description: A item object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Event'
+        '400':
+          description: The specified item ID is invalid (not an item).
+        '404':
+          description: An item with specified ID was not found.
+    put:
+      tags:
+        - event
+      summary: Update specific event
+      operationId: updateEvent
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id of event generated ramdonmly
+          schema:
+            $ref: '#/components/schemas/ID'
+      responses:
+        '200':
+          description: Updated sucesssfully
+  /event/{eventId}/item/{itemId}:
+    get:
+      tags:
+        - event
+        - item
+      summary: Get item from specific event
+      operationId: getItemEvent
+      parameters:
+        - name: eventId
+          in: path
+          required: true
+          description: id of event generated ramdonmly
+          schema:
+            $ref: '#/components/schemas/ID'
+        - name: itemId
+          in: path
+          required: true
+          description: id of item generated ramdonmly
+          schema:
+            $ref: '#/components/schemas/ID'
+      responses:
+        '200':
+          description: item event
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ItemEvent'
+  /swagger:
+    x-swagger-pipe: swagger_raw
+components:
+  schemas:
+    Date:
+      type: string
+      format: date
+    ID:
+      type: integer
+      format: int64
+      minimum: 1
+    Amount:
+      type: integer
+      format: int32
+    Item:
+      properties:
+        id:
+          $ref: '#/components/schemas/ID'
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        photo:
+          type: string
+    NewItem:
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+        photo:
+          type: string
+    ItemList:
+      required:
+        - itemList
+      type: object
+      properties:
+        itemList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Item'
+    Event:
+      properties:
+        id:
+          $ref: '#/components/schemas/ID'
+        name:
+          type: string
+        date:
+          $ref: '#/components/schemas/Date'
+    NewEvent:
+      properties:
+        name:
+          type: string
+        date:
+          $ref: '#/components/schemas/Date'
+    EventList:
+      required:
+        - itemList
+      type: object
+      properties:
+        itemList:
+          type: array
+          items:
+            $ref: '#/components/schemas/Event'
+    ItemEvent:
+      properties:
+        id:
+          $ref: '#/components/schemas/ID'
+        idItem:
+          $ref: '#/components/schemas/ID'
+        idEvento:
+          $ref: '#/components/schemas/ID'
+        initialAmount:
+          $ref: '#/components/schemas/Amount'
+        finalAmount:
+          $ref: '#/components/schemas/Amount'
+    ErrorResponse:
+      required:
+        - message
+      type: object
+      properties:
+        message:
+          type: string
