@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Matsuri Cash Flow Server API
-  version: 0.0.1
+  version: 0.0.2
 servers:
   - url: '{protocol}://localhost:{port}/{basePath}'
     description: Local environment
