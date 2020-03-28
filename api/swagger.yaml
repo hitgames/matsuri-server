@@ -1,15 +1,20 @@
-openapi: 3.0.1
+openapi: 3.0.3
 info:
   title: Matsuri Cash Flow Server API
-  version: 0.0.1
+  version: 0.0.2
 servers:
-  - url: '{protocol}://localhost:10010/v1'
+  - url: '{protocol}://localhost:{port}/{basePath}'
+    description: Local environment
     variables:
       protocol:
         enum:
           - http
           - https
         default: https
+      port:
+        default: '3000'
+      basePath:
+        default: v1
 paths:
   /items:
     get:
@@ -282,5 +287,7 @@ components:
         - message
       type: object
       properties:
+        code:
+          type: number
         message:
           type: string
